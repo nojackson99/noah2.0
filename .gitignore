@@ -1,0 +1,17 @@
+# Environment / secrets
+.env
+.env.*
+
+# Go
+/bin/
+/pkg/
+*.exe
+*.test
+*.out
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
