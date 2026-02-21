@@ -13,6 +13,10 @@ type Config struct {
 	Port          int
 	OpenAIAPIKey  string
 	OpenAIModel   string
+	DatabaseURL          string
+	GoogleClientID       string
+	GoogleClientSecret   string
+	GoogleRefreshToken   string
 }
 
 func Load() Config {
@@ -20,10 +24,14 @@ func Load() Config {
 	_ = godotenv.Load()
 
 	cfg := Config{
-		Env:          getenv("ENV", "dev"),
-		Port:         mustAtoi(getenv("PORT", "8080")),
-		OpenAIAPIKey: getenv("OPENAI_API_KEY", ""),
-		OpenAIModel:  getenv("OPENAI_MODEL", "gpt-4.1-mini"),
+		Env:                  getenv("ENV", "dev"),
+		Port:                 mustAtoi(getenv("PORT", "8080")),
+		OpenAIAPIKey:         getenv("OPENAI_API_KEY", ""),
+		OpenAIModel:          getenv("OPENAI_MODEL", "gpt-4.1-mini"),
+		DatabaseURL:          getenv("DATABASE_URL", ""),
+		GoogleClientID:       getenv("GOOGLE_CLIENT_ID", ""),
+		GoogleClientSecret:   getenv("GOOGLE_CLIENT_SECRET", ""),
+		GoogleRefreshToken:   getenv("GOOGLE_REFRESH_TOKEN", ""),
 	}
 
 	return cfg
