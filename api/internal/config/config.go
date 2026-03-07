@@ -17,6 +17,7 @@ type Config struct {
 	GoogleClientID       string
 	GoogleClientSecret   string
 	GoogleRefreshToken   string
+	NotesDir             string
 }
 
 func Load() Config {
@@ -32,6 +33,7 @@ func Load() Config {
 		GoogleClientID:       getenv("GOOGLE_CLIENT_ID", ""),
 		GoogleClientSecret:   getenv("GOOGLE_CLIENT_SECRET", ""),
 		GoogleRefreshToken:   getenv("GOOGLE_REFRESH_TOKEN", ""),
+		NotesDir:             getenv("NOTES_DIR", ""),
 	}
 
 	return cfg

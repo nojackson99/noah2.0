@@ -41,6 +41,7 @@ func main() {
 	routes.RegisterHealth(srv.Engine)
 	routes.RegisterChat(srv.Engine, cfg, openai)
 	routes.RegisterIngest(srv.Engine, calClient, database)
+	routes.RegisterIngestNotes(srv.Engine, cfg.NotesDir, database, openai)
 
 	if err := srv.Run(cfg.Port); err != nil {
 		log.Fatalf("server error: %v", err)
