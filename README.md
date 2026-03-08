@@ -103,16 +103,37 @@ GOOGLE_REFRESH_TOKEN=...
 
 ---
 
-### Week 3 — Markdown Notes Ingestion + Embeddings (next)
-- Read `.md` files from a local notes folder
-- Chunk them into smaller pieces
-- Generate embeddings via OpenAI
-- Store in Postgres with `pgvector` for semantic search
+### ✅ Week 3 — Markdown Notes Ingestion + Embeddings
+**What was built:**
+- `POST /ingest/notes` reads `.md` files from `NOTES_DIR`, chunks by paragraph, generates embeddings via `text-embedding-3-small`, and upserts into Postgres
+- Chunking is paragraph-based (split on double newline); chunks under 50 chars are skipped
+- Upserts are idempotent — keyed on `(file_path, chunk_index)`
+- IVFFlat index on the `embedding` column for fast cosine similarity queries
 
-### Week 4 — Weekly Planning Endpoint
-- Query calendar events + relevant notes
-- Send to LLM with a planning prompt
-- Return a structured weekly plan
+**Key files:**
+- `api/internal/notes/reader.go` — walks `NOTES_DIR`, splits `.md` files into chunks
+- `api/internal/notes/store.go` — upserts chunks+embeddings into `note_chunks`
+- `api/internal/llm/openai.go` — added `Embed()` using `text-embedding-3-small`
+- `api/internal/httpserver/routes/ingest_notes.go` — `POST /ingest/notes` handler
+- `api/db/migrations/002_note_chunks.sql` — schema for the `note_chunks` table
+
+**Required env vars:**
+```
+NOTES_DIR=../personal-notes
+```
+
+---
+
+### ✅ Week 4 — Weekly Planning Endpoint
+**What was built:**
+- `POST /plan/week` fetches this week's calendar events from the DB, retrieves the top-5 semantically relevant note chunks via cosine similarity, and asks the LLM to produce a weekly plan
+- Semantic search uses a fixed planning query embedded at request time
+- Returns `{"plan": "..."}` with a plain-text weekly plan
+
+**Key files:**
+- `api/internal/notes/search.go` — cosine similarity search over `note_chunks`
+- `api/internal/calendar/query.go` — fetches next 7 days of events from the DB
+- `api/internal/httpserver/routes/plan_week.go` — `POST /plan/week` handler + prompt builder
 
 ---
 

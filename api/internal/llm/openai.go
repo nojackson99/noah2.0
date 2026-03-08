@@ -128,15 +128,19 @@ func (c *Client) Respond(ctx context.Context, input string) (string, error) {
 	}
 
 	var parsed struct {
-		OutputText string `json:"output_text"`
+		Output []struct {
+			Content []struct {
+				Text string `json:"text"`
+			} `json:"content"`
+		} `json:"output"`
 	}
 	if err := json.Unmarshal(raw, &parsed); err != nil {
 		return "", fmt.Errorf("parse response: %w body=%s", err, string(raw))
 	}
 
-	if parsed.OutputText == "" {
+	if len(parsed.Output) == 0 || len(parsed.Output[0].Content) == 0 || parsed.Output[0].Content[0].Text == "" {
 		return "", fmt.Errorf("empty output_text: body=%s", string(raw))
 	}
 
-	return parsed.OutputText, nil
+	return parsed.Output[0].Content[0].Text, nil
 }
